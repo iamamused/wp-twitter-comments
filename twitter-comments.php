@@ -15,7 +15,6 @@ Requires at least: 2.7
 
 session_start();
 require_once dirname(__FILE__) . '/twitteroauth/twitteroauth.php';
-require_once dirname(__FILE__) . '/config.php';
 
 
 function tweet_comment_init() {
@@ -81,6 +80,63 @@ function tweet_comment_pre_comment_on_post( $postId ) {
 add_action('pre_comment_on_post', 'tweet_comment_pre_comment_on_post');
 
 
+//////////////////////
+// Admin settings
+//////////////////////
+
+
+// create custom plugin settings menu
+add_action('admin_menu', 'twitter_comments_create_menu');
+
+function twitter_comments_create_menu() {
+
+	//create new top-level menu
+	add_menu_page('Twitter Comments Plugin Settings', 'Twitter Comments Settings', 'administrator', __FILE__, 'twitter_comments_settings_page',plugins_url('/images/icon.png', __FILE__));
+
+	//call register settings function
+	add_action( 'admin_init', 'twitter_comments_register_mysettings' );
+}
+
+
+function twitter_comments_register_mysettings() {
+	register_setting( 'twitter-comments-settings-group', 'CONSUMER_KEY' );
+	register_setting( 'twitter-comments-settings-group', 'CONSUMER_SECRET' );
+	register_setting( 'twitter-comments-settings-group', 'OAUTH_CALLBACK' );
+}
+
+function twitter_comments_settings_page() {
+?>
+<div class="wrap">
+<h2>Twitter Comments</h2>
+
+<form method="post" action="options.php">
+    <?php settings_fields( 'twitter-comments-settings-group' ); ?>
+
+    <table class="form-table">
+        <tr valign="top">
+        <th scope="row">Twitter CONSUMER_KEY</th>
+        <td><input type="text" name="CONSUMER_KEY" value="<?php echo get_option('CONSUMER_KEY'); ?>" /></td>
+        </tr>
+         
+        <tr valign="top">
+        <th scope="row">Twitter CONSUMER_SECRET</th>
+        <td><input type="text" name="CONSUMER_SECRET" value="<?php echo get_option('CONSUMER_SECRET'); ?>" /></td>
+        </tr>
+        
+        <tr valign="top">
+        <th scope="row">Twitter OAUTH_CALLBACK</th>
+        <td><input type="text" name="OAUTH_CALLBACK" value="<?php echo get_option('OAUTH_CALLBACK'); ?>" /></td>
+        </tr>
+    </table>
+    
+    <p class="submit">
+    <input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
+    </p>
+
+</form>
+</div>
+<?php 
+} 
 
 
 /*

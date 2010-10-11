@@ -3,13 +3,12 @@
 /* Start session and load library. */
 session_start();
 require_once( dirname(__FILE__) . '/twitteroauth/twitteroauth.php');
-require_once( dirname(__FILE__) . '/config.php');
 
 /* Build TwitterOAuth object with client credentials. */
-$connection = new TwitterOAuth(CONSUMER_KEY, CONSUMER_SECRET);
+$connection = new TwitterOAuth(get_option('CONSUMER_KEY'), get_option('CONSUMER_SECRET'));
  
 /* Get temporary credentials. */
-$request_token = $connection->getRequestToken(OAUTH_CALLBACK);
+$request_token = $connection->getRequestToken(get_option('OAUTH_CALLBACK'));
 
 /* Save temporary credentials to session. */
 $_SESSION['oauth_token'] = $token = $request_token['oauth_token'];
