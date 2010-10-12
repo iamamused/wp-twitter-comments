@@ -32,7 +32,6 @@ require_once dirname(__FILE__) . '/twitteroauth/twitteroauth.php';
 
 function tweet_comment_init() {
 	wp_enqueue_script('jquery');
-	
 }
 add_action('init', 'tweet_comment_init');
 

@@ -1,16 +1,10 @@
-=== Twitter Comments ===
-Contributors: Jeffrey Sambells
-Plugin URI: http://jeffreysambells.com/tweet-comments/
-Author URI: http://jeffreysambells.com.com/
-Tags: twitter, tweet, oauth, comments
-Requires at least: 2.7
+# Twitter Comments
 
 Comment plugin to use twitter as the source for comments.
 
-
 This is very, very rudimentary at the moment and is a work-in-progress.
 
-Special thanks to Happy Cog for the inspiration: http://cog.gd/8
+Special thanks to Happy Cog for the inspiration: (http://cog.gd/8)[http://cog.gd/8]
 
 ## How Twitter Comments Works
 
