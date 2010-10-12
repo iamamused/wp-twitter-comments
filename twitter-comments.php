@@ -62,20 +62,40 @@ function tweet_comment_pre_comment_on_post( $postId ) {
 	}	
 	
 	/* Get user access tokens out of the session. */
-	//$access_token = $_SESSION['access_token'];
+	$access_token = $_SESSION['access_token'];
 	
 	/* Create a TwitterOauth object with consumer/user tokens. */
-	//$connection = new TwitterOAuth(CONSUMER_KEY, CONSUMER_SECRET, $access_token['oauth_token'], $access_token['oauth_token_secret']);
+	$connection = new TwitterOAuth(get_option('CONSUMER_KEY'), get_option('CONSUMER_SECRET'), $access_token['oauth_token'], $access_token['oauth_token_secret']);
 	
 	//$content = $connection->get('account/verify_credentials');
 	
-	// They've been verified, pre-populate some fileds.
+	// Tweet it on behalf of the commentor.
+	
+	$postId = $_POST['comment_post_ID'];
+
+	/* statuses/update */
+	$parameters = array(
+		'status' => $_POST['comment']
+	);
+	$status = $connection->post('statuses/update', $parameters);
+	
+	switch ($connection->http_code) {
+		case '200':
+	    case '304':
+	    break;
+	    default:
+	    	// There was an error.
+	    	//header('content-type: text/plain'); var_dump($_POST, $status, $connection); die('error');
+	    break;
+	}
+	
+	// Now store it in wordpress too.
 	
 	// AUTHOR and EMAIL are required.
 	$_POST['author'] = $_SESSION['access_token']['screen_name'];
 	$_POST['email'] = $_SESSION['access_token']['screen_name'] . '@twitter.com';
 	$_POST['url'] = 'http://twitter.com/' . $_SESSION['access_token']['screen_name'];
-	//$_POST['content'];
+	//$_POST['comment'];
 	
 }
 add_action('pre_comment_on_post', 'tweet_comment_pre_comment_on_post');
