@@ -34,8 +34,16 @@ unset($_SESSION['oauth_token_secret']);
 if (200 == $connection->http_code) {
   /* The user has been verified and the access tokens can be saved for future use */
   $_SESSION['status'] = 'verified';
-  //header('Location: ./index.php');
+  
+  // Fake the previous $_POST
+  // @TODO, is there a better way to do this?
+  $_SERVER['REQUEST_METHOD'] = 'POST';
+  $_POST = (array)@unserialize($_SESSION['twitter_comments_post_storage']);
+  
+  // Re-try the comment post.
+  require_once dirname(__CLASS__) . '../../../wp-comments-post.php';
+  
 } else {
   /* Save HTTP status for error dialog on connnect page.*/
-  //header('Location: ./clearsessions.php');
+  header('Location: ./clearsessions.php');
 }

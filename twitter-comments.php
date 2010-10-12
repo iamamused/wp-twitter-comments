@@ -56,6 +56,7 @@ function tweet_comment_pre_comment_on_post( $postId ) {
 	// Grab the comment and see if we've authorized twitter yet.
 	//http://shiflett.org/blog/2010/sep/twitter-oauth
 	if (empty($_SESSION['status']) || $_SESSION['status'] != 'verified') {
+		$_SESSION['twitter_comments_post_storage'] = serialize($_POST);
 		require dirname(__FILE__) . '/redirect.php';
 		die();	
 	}	
