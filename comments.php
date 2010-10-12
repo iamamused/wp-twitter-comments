@@ -43,13 +43,15 @@
 	<section id="respond" class="post-comments comment-form">
 		<form action="<?php echo get_option('siteurl'); ?>/wp-comments-post.php" method="post">
 		<dl>	
-			<dt><label for="comment">Tweet your thoughts</label></dt>
+			<dt><label for="comment">Tweet your thoughts:</label></dt>
 			<dd>
-				<textarea name="comment" id="comment" cols="100%" rows="3" tabindex="4"></textarea>
-				<p>120 char or less please. The link to this post will be appended automatically.</p>
+				<textarea name="comment" id="comment" cols="100%" rows="3" tabindex="1"></textarea>
+				<p>120 char or less please. The short link to this post will be appended automatically.</p>
 				</dd>
 			<dt><strong>Note: I will not now, or ever, tweet without your permission.</strong></dt>
-			<dd><input name="submit" type="submit" id="submit" tabindex="5" value="Authorize / Tweet" /></dd>
+			<dd>
+			
+			<input name="submit" type="submit" id="submit" tabindex="2" value="<?php echo ((@$_SESSION['status'] == 'verified') ? 'Tweet' : 'Authorize and Tweet') ?>" /></dd>
 		</dl>
 	
 		<?php comment_id_fields(); ?>
