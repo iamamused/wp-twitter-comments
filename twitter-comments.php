@@ -70,12 +70,10 @@ function tweet_comment_pre_comment_on_post( $postId ) {
 	//$content = $connection->get('account/verify_credentials');
 	
 	// Tweet it on behalf of the commentor.
-	
-	$postId = $_POST['comment_post_ID'];
 
 	/* statuses/update */
 	$parameters = array(
-		'status' => $_POST['comment']
+		'status' => $_POST['comment'] . ' ' . twitter_comments_get_short_for_post( $_POST['comment_post_ID'] ),
 	);
 	$status = $connection->post('statuses/update', $parameters);
 	
@@ -123,6 +121,7 @@ function twitter_comments_register_mysettings() {
 	register_setting( 'twitter-comments-settings-group', 'CONSUMER_KEY' );
 	register_setting( 'twitter-comments-settings-group', 'CONSUMER_SECRET' );
 	register_setting( 'twitter-comments-settings-group', 'OAUTH_CALLBACK' );
+	register_setting( 'twitter-comments-settings-group', 'SHORT_PATTERN' );
 }
 
 function twitter_comments_settings_page() {
@@ -144,10 +143,25 @@ function twitter_comments_settings_page() {
         <td><input type="text" name="CONSUMER_SECRET" value="<?php echo get_option('CONSUMER_SECRET'); ?>" /></td>
         </tr>
         
-        <tr valign="top">
-        <th scope="row">Twitter OAUTH_CALLBACK</th>
-        <td><input type="text" name="OAUTH_CALLBACK" value="<?php echo get_option('OAUTH_CALLBACK'); ?>" /></td>
-        </tr>
+		<tr valign="top">
+		<th scope="row">Twitter OAUTH_CALLBACK</th>
+		<td><input type="text" name="OAUTH_CALLBACK" value="<?php echo get_option('OAUTH_CALLBACK'); ?>" /></td>
+		</tr>
+		
+		<tr valign="top">
+		<th scope="row">API URL for shortener. Use %s for the location if the long url string.</th>
+		
+		<td>
+			<p>For example: http://tinyurl.com/api-create.php?url=%s</p>
+			<p>The URL service must use HTTP GET requests and output a plain-text short URL including the http prefix (like <a href="http://tinyurl.com/api-create.php?url=http://jeffreysambells.com">this</a>).</p>
+			<p>HTTP POST is not supported. Use <code>%s</code>code> as the vaiable for the long url.</p>
+			<input type="text" name="SHORT_PATTERN" value="<?php 
+				$url = get_option('SHORT_PATTERN');
+				if (strlen($url) == 0) $url = 'http://tinyurl.com/api-create.php?url=%s';
+				echo $url; 
+			?>" /></td>
+		</tr>
+
     </table>
     
     <p class="submit">
@@ -159,6 +173,17 @@ function twitter_comments_settings_page() {
 <?php 
 } 
 
+function twitter_comments_get_short_for_post( $postId ) {
+	// http://codex.wordpress.org/Function_Reference/get_post
+	
+	$shortLink = get_post_meta($postId, 'TWITTER_COMMENTS_SHORT_URL', true );
+	if (!$shortLink) {
+		$permalink = get_permalink( $postId );
+		$shortLink = file_get_contents( sprintf( get_option( 'SHORT_PATTERN' ), $permalink ) );
+		add_post_meta($postId, 'TWITTER_COMMENTS_SHORT_URL', $shortLink, true );
+	} 
+	return $shortLink;
+}
 
 /*
 
