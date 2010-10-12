@@ -32,6 +32,7 @@ require_once dirname(__FILE__) . '/twitteroauth/twitteroauth.php';
 
 function tweet_comment_init() {
 	wp_enqueue_script('jquery');
+	
 }
 add_action('init', 'tweet_comment_init');
 
@@ -84,10 +85,13 @@ function tweet_comment_pre_comment_on_post( $postId ) {
 	
 	// Tweet it on behalf of the commentor.
 
+	$short = ' ' . twitter_comments_get_short_for_post( $_POST['comment_post_ID'] );
+
 	/* statuses/update */
 	$parameters = array(
-		'status' => $_POST['comment'] . ' ' . twitter_comments_get_short_for_post( $_POST['comment_post_ID'] ),
+		'status' => substr( stripslashes( $_POST['comment'] ), 0, 140 - strlen( $short ) ) . $short,
 	);
+
 	$status = $connection->post('statuses/update', $parameters);
 	
 	switch ($connection->http_code) {
